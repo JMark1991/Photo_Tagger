@@ -1,24 +1,28 @@
-import os
-import sys; sys.path.append('image-similarity-clustering')
+import os; dirname = os.path.abspath(os.path.dirname(__file__))
 
-from flask import (Flask, flash, redirect, render_template, request,
-                   send_from_directory, url_for, render_template_string)
+import sys; sys.path.append(os.path.join(dirname, 'image-similarity-clustering'))
+
+from flask import Flask, flash, redirect, render_template, request, send_from_directory, url_for
+
 from werkzeug.utils import secure_filename
 
 from features import extract_features
 from predictor import predict_location
 import numpy as np 
 
-UPLOAD_FOLDER = 'temp'
+
+UPLOAD_FOLDER = os.path.join(dirname, 'temp')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+
 def allowed_file(filename):
     # check if the file extension is allowed
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 # Open the route for the upload_file function
 @app.route('/', methods=['GET', 'POST'])
@@ -30,8 +34,7 @@ def upload_file():
             flash('No files part')
             return redirect(request.url)
         files = request.files.getlist('file')
-        # if user does not select file, browser also
-        # submit an empty part without filename
+
         safe_files = []
         for file in files:
             if file.filename == '':
@@ -43,25 +46,30 @@ def upload_file():
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 safe_files.append(filename)
         return results(safe_files)
-            #redirect(url_for('results',filename='/Uploads/'+filename))
+        
     return render_template('upload.html')
 
 
 # Open the route for the results function
 @app.route('/results', methods=['GET', 'POST'])
 def results(filenames):
-    #full_filename = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+
     print(filenames)
-    features_df = extract_features('temp', filenames=filenames)
-    prediction_conf = predict_location(features_df, model='Model_04.h5')
+    
+    # extract the features from the images
+    features_df = extract_features(app.config['UPLOAD_FOLDER'], filenames=filenames)
+    
+    # use the model to predict the location from the features
+    prediction_conf = predict_location(features_df, model=os.path.join(dirname, 'Model_04.h5'))
+    
     cities = ['Coimbra', 'Lisboa', 'Porto']
     position_max = [np.argmax(p) for p in prediction_conf]
 
     photo_urls = [url_for('uploaded_file',filename=filename) for filename in filenames]
-
+    
+    # show results
     html_code = ""
     for i, photo in enumerate(photo_urls):
-
         html_code += (f'''<div class="image_box">
         <img src={photo} width='224' height='224' class="image_thumbnail" />
         <div class="label">
@@ -76,11 +84,16 @@ def results(filenames):
 
     return render_template('upload.html', html_code=html_code)
 
+
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
+
+    # prepare the photo to be shown
     return send_from_directory(app.config['UPLOAD_FOLDER'],filename)
 
-# running the flask app defined above
-if __name__ == '__main__':
-    app.run(debug=True)
 
+# running the flask app
+if __name__ == '__main__':
+
+    port = os.environ.get('PORT', 5000)
+    app.run(host='0.0.0.0', port=port, threaded=False)

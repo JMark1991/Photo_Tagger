@@ -1,0 +1,11 @@
+Keras==2.3.1
+keras-preprocessing==1.1.0
+numpy==1.19.1
+pandas==1.1.0
+Pillow==5.1.0
+scipy==1.4.1
+tensorflow-gpu==2.1.1
+Werkzeug==0.15
+umap-learn==0.3.10
+Flask==1.1.2
+
