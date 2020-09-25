@@ -66,7 +66,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](http://photo-tagger.herokuapp.com/)
+[![Photo_Tagger_Screenshot][product-screenshot]](http://photo-tagger.herokuapp.com/)
 
 This project started as the my Final Project of the Ironhack Data Analytics and Machine Learning Bootcamp that I took.
 
@@ -176,4 +176,4 @@ Project Link: [https://github.com/JMark1991/Photo_Tagger](https://github.com/JMa
 [license-url]: https://github.com/JMark1991/Photo_Tagger/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/jorge-andre-marques/
-[product-screenshot]: images/screenshot.png
+[product-screenshot]: images/screenshot.PNG
